@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Data/">
+    <Project Path="BarbershopReservationsUni.Data.Models/BarbershopReservationsUni.Data.Models.csproj" />
+    <Project Path="BarbershopReservationsUni.Data/BarbershopReservationsUni.Data.csproj" />
+  </Folder>
+  <Folder Name="/Services/">
+    <Project Path="BarbershopReservationsUni.Services/BarbershopReservationsUni.Services.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="BarbershopReservationsUni.Services.Tests/BarbershopReservationsUni.Services.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Web/">
+    <Project Path="BarbershopReservationsUni.Web.ViewModels/BarbershopReservationsUni.Web.ViewModels.csproj" />
+    <Project Path="BarbershopReservationsUni.Web/BarbershopReservationsUni.Web.csproj" />
+  </Folder>
+</Solution>
