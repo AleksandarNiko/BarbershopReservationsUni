@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BarbershopReservationsUni.Data.Models\BarbershopReservationsUni.Data.Models.csproj" />
+    <ProjectReference Include="..\BarbershopReservationsUni.Data\BarbershopReservationsUni.Data.csproj" />
+  </ItemGroup>
+
 </Project>
