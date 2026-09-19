@@ -1,0 +1,114 @@
+@model BookingViewModel
+@{
+    ViewData["Title"] = "Запази час";
+}
+<section class="page-hero compact">
+    <div class="container">
+        <span class="eyebrow">ONLINE BOOKING</span>
+        <h1>Запази своя<br /><em>час.</em></h1>
+        <p>Избери услуга, барбер, дата и свободен час.</p>
+    </div>
+</section>
+
+<section class="booking-section">
+    <div class="container">
+        <div class="booking-layout">
+            <div class="booking-form-card">
+                <div class="step"><span>01</span><div><small>СТЪПКА 1</small><h2>Избери услуга</h2></div></div>
+                <div class="option-grid service-options">
+                    @foreach (var service in Model.Services)
+                    {
+                        <label class="choice-card @(Model.ServiceId == service.Id ? "selected" : "")">
+                            <input type="radio" name="serviceChoice" value="@service.Id" @(Model.ServiceId == service.Id ? "checked" : "") />
+                            <span class="choice-content">
+                                <strong>@service.Name</strong>
+                                <small>@service.DurationMinutes мин. · @service.Price.ToString("0.00") лв.</small>
+                            </span>
+                            <span class="radio-dot"></span>
+                        </label>
+                    }
+                </div>
+
+                <div class="step mt-5"><span>02</span><div><small>СТЪПКА 2</small><h2>Избери барбер</h2></div></div>
+                <div class="option-grid">
+                    @foreach (var barber in Model.Barbers)
+                    {
+                        <label class="choice-card barber-choice @(Model.BarberId == barber.Id ? "selected" : "")">
+                            <input type="radio" name="barberChoice" value="@barber.Id" @(Model.BarberId == barber.Id ? "checked" : "") />
+                            <span class="mini-avatar">@string.Concat(barber.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => x[0]))</span>
+                            <span class="choice-content">
+                                <strong>@barber.FullName</strong>
+                                <small>@barber.Specialization</small>
+                            </span>
+                            <span class="radio-dot"></span>
+                        </label>
+                    }
+                </div>
+
+                <form asp-action="Create" method="post" id="bookingForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="ServiceId" id="serviceId" />
+                    <input type="hidden" asp-for="BarberId" id="barberId" />
+
+                    <div class="step mt-5"><span>03</span><div><small>СТЪПКА 3</small><h2>Дата и час</h2></div></div>
+                    <div class="date-time-grid">
+                        <div>
+                            <label asp-for="Date" class="form-label">Дата</label>
+                            <input asp-for="Date" class="form-control form-control-lg" id="dateInput" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="Date" class="text-danger"></span>
+                        </div>
+                        <div>
+                            <label class="form-label">Свободни часове</label>
+                            <div id="timeSlots" class="time-slots">
+                                @foreach (var time in Model.AvailableTimes)
+                                {
+                                    <button type="button" class="time-slot @(Model.Time == time ? "active" : "")" data-time="@time">@time</button>
+                                }
+                            </div>
+                            <input type="hidden" asp-for="Time" id="timeInput" />
+                            <span asp-validation-for="Time" class="text-danger"></span>
+                            <div id="slotMessage" class="slot-message"></div>
+                        </div>
+                    </div>
+
+                    <div class="step mt-5"><span>04</span><div><small>СТЪПКА 4</small><h2>Твоите данни</h2></div></div>
+                    <div class="row g-3">
+                        <div class="col-md-6"><label asp-for="ClientName" class="form-label"></label><input asp-for="ClientName" class="form-control form-control-lg" placeholder="Име и фамилия" /><span asp-validation-for="ClientName" class="text-danger"></span></div>
+                        <div class="col-md-6"><label asp-for="ClientPhone" class="form-label"></label><input asp-for="ClientPhone" class="form-control form-control-lg" placeholder="0888 123 456" /><span asp-validation-for="ClientPhone" class="text-danger"></span></div>
+                        <div class="col-md-6"><label asp-for="ClientEmail" class="form-label"></label><input asp-for="ClientEmail" class="form-control form-control-lg" placeholder="you@email.com" /><span asp-validation-for="ClientEmail" class="text-danger"></span></div>
+                        <div class="col-12"><label asp-for="Notes" class="form-label"></label><textarea asp-for="Notes" class="form-control" rows="3" placeholder="Нещо, което искаш да знаем? (по желание)"></textarea></div>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger mt-4">@Html.ValidationSummary(true)</div>
+                    }
+
+                    <button type="submit" class="btn btn-gold btn-lg w-100 booking-submit">Потвърди резервацията <span>→</span></button>
+                    <p class="booking-note">Без плащане онлайн · Можеш да отмениш часа си от „Моите часове“.</p>
+                </form>
+            </div>
+
+            <aside class="booking-summary">
+                <span class="eyebrow dark">ТВОЯТ ЧАС</span>
+                <h3>Резюме</h3>
+                <div class="summary-line"><span>Услуга</span><strong id="summaryService">—</strong></div>
+                <div class="summary-line"><span>Барбер</span><strong id="summaryBarber">—</strong></div>
+                <div class="summary-line"><span>Дата</span><strong id="summaryDate">—</strong></div>
+                <div class="summary-line"><span>Час</span><strong id="summaryTime">—</strong></div>
+                <div class="summary-total"><span>Общо</span><strong id="summaryPrice">—</strong></div>
+                <div class="summary-tip">✓ Потвърждението се показва веднага след успешна резервация.</div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        window.bookingData = {
+            services: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Services.Select(s => new { id = s.Id, name = s.Name, price = s.Price }))),
+            barbers: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Barbers.Select(b => new { id = b.Id, name = b.FullName })))
+        };
+    </script>
+}

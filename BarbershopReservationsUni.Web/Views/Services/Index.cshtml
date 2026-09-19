@@ -1,0 +1,30 @@
+@model IEnumerable<Service>
+@{
+    ViewData["Title"] = "Услуги";
+}
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">SHARP & CO.</span>
+        <h1>Услуги, направени<br /><em>за твоя стил.</em></h1>
+        <p>Избери услуга, после дата и час. Цялата резервация отнема по-малко от минута.</p>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        <div class="service-list">
+            @foreach (var service in Model)
+            {
+                <article class="service-row">
+                    <span class="service-row-icon">✂</span>
+                    <div class="service-row-main">
+                        <h3>@service.Name</h3>
+                        <p>@service.Description</p>
+                        <span>@service.DurationMinutes минути</span>
+                    </div>
+                    <strong>@service.Price.ToString("0.00") лв.</strong>
+                    <a class="btn btn-dark" asp-controller="Booking" asp-action="Index" asp-route-serviceId="@service.Id">Запази →</a>
+                </article>
+            }
+        </div>
+    </div>
+</section>

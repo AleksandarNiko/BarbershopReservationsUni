@@ -7,12 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BarbershopReservationsUni.Data.Models\BarbershopReservationsUni.Data.Models.csproj" />
     <ProjectReference Include="..\BarbershopReservationsUni.Data\BarbershopReservationsUni.Data.csproj" />
     <ProjectReference Include="..\BarbershopReservationsUni.Services\BarbershopReservationsUni.Services.csproj" />
+    <ProjectReference Include="..\BarbershopReservationsUni.Web.ViewModels\BarbershopReservationsUni.Web.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

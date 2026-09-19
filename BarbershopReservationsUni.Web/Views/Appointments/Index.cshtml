@@ -1,0 +1,59 @@
+@model IEnumerable<AppointmentListItemViewModel>
+@{
+    ViewData["Title"] = "Моите часове";
+    var hasResults = Model is not null;
+}
+<section class="page-hero compact">
+    <div class="container">
+        <span class="eyebrow">MY APPOINTMENTS</span>
+        <h1>Твоите<br /><em>часове.</em></h1>
+        <p>Въведи телефона си, за да видиш или отмениш резервациите си.</p>
+    </div>
+</section>
+<section class="section appointments-section">
+    <div class="container narrow">
+        @if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
+        @if (TempData["Error"] is string error) { <div class="alert alert-danger">@error</div> }
+
+        <form method="post" class="lookup-card">
+            @Html.AntiForgeryToken()
+            <label for="phone" class="form-label">Телефонен номер</label>
+            <div class="lookup-row">
+                <input id="phone" name="phone" value="@ViewBag.Phone" class="form-control form-control-lg" placeholder="0888 123 456" required />
+                <button class="btn btn-dark btn-lg">Покажи часовете →</button>
+            </div>
+        </form>
+
+        @if (ViewBag.Phone is not null)
+        {
+            var items = Model?.ToList() ?? [];
+            if (items.Count == 0)
+            {
+                <div class="empty-state"><span>○</span><h3>Няма намерени резервации</h3><p>Провери номера си или направи нова резервация.</p><a class="btn btn-gold" asp-controller="Booking" asp-action="Index">Запази час →</a></div>
+            }
+            else
+            {
+                <div class="appointment-list">
+                    @foreach (var item in items)
+                    {
+                        var statusClass = item.Status switch { AppointmentStatus.Confirmed => "confirmed", AppointmentStatus.Cancelled => "cancelled", AppointmentStatus.Completed => "completed", _ => "pending" };
+                        <article class="appointment-card">
+                            <div class="appointment-date"><strong>@item.AppointmentDate.ToString("dd")</strong><span>@item.AppointmentDate.ToString("MMM", new System.Globalization.CultureInfo("bg-BG")).ToUpper()</span></div>
+                            <div class="appointment-main"><h3>@item.ServiceName</h3><p>@item.BarberName · @item.AppointmentDate.ToString("HH:mm") · @item.Price.ToString("0.00") лв.</p></div>
+                            <span class="status @statusClass">@(item.Status switch { AppointmentStatus.Confirmed => "Потвърдена", AppointmentStatus.Cancelled => "Отказана", AppointmentStatus.Completed => "Завършена", _ => "Изчаква" })</span>
+                            @if (item.Status == AppointmentStatus.Confirmed && item.AppointmentDate > DateTime.Now)
+                            {
+                                <form asp-action="Cancel" method="post" onsubmit="return confirm('Сигурни ли сте, че искате да отмените този час?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="phone" value="@ViewBag.Phone" />
+                                    <button class="cancel-link">Отмени</button>
+                                </form>
+                            }
+                        </article>
+                    }
+                </div>
+            }
+        }
+    </div>
+</section>

@@ -1,0 +1,30 @@
+@model IEnumerable<Barber>
+@{
+    ViewData["Title"] = "Екип";
+}
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">OUR TEAM</span>
+        <h1>Хората, които<br /><em>разбират стила.</em></h1>
+        <p>Избери своя барбер и запази час директно при него.</p>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        <div class="barber-grid large">
+            @foreach (var barber in Model)
+            {
+                var initials = string.Join("", barber.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => x[0]));
+                <article class="barber-card">
+                    <div class="barber-photo large-photo"><span>@initials</span></div>
+                    <div class="barber-info">
+                        <h3>@barber.FullName</h3>
+                        <p>@barber.Specialization</p>
+                        <small>Професионален барбер · Sharp & Co.</small>
+                        <a class="btn btn-dark mt-3" asp-controller="Booking" asp-action="Index" asp-route-barberId="@barber.Id">Запази при @barber.FullName.Split(' ')[0] →</a>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>

@@ -1,8 +1,109 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Начало";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <div class="hero-copy">
+            <span class="eyebrow">BARBERSHOP · PLOVDIV</span>
+            <h1>СТИЛЪТ НЕ Е<br /><span>СЛУЧАЙНОСТ.</span></h1>
+            <p>Професионално подстригване, прецизна брада и отношение, което ще усетиш още от първия път.</p>
+            <div class="hero-actions">
+                <a class="btn btn-gold btn-lg" asp-controller="Booking" asp-action="Index">Запази своя час <span>→</span></a>
+                <a class="hero-link" href="#services">Разгледай услугите ↓</a>
+            </div>
+        </div>
+        <div class="hero-badge">
+            <strong>10+</strong>
+            <span>ГОДИНИ<br />ОПИТ</span>
+        </div>
+    </div>
+</section>
+
+<section class="stats-strip">
+    <div class="container stats-grid">
+        <div><strong>4.9</strong><span>★ Google рейтинг</span></div>
+        <div><strong>2K+</strong><span>Доволни клиенти</span></div>
+        <div><strong>30–45</strong><span>Мин. за услуга</span></div>
+        <div><strong>09–19</strong><span>Пон–Съб</span></div>
+    </div>
+</section>
+
+<section class="section" id="services">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow dark">НАШИТЕ УСЛУГИ</span>
+                <h2>Просто избери.<br /><em>Ние ще се погрижим.</em></h2>
+            </div>
+            <a class="text-link" asp-controller="Services" asp-action="Index">Всички услуги →</a>
+        </div>
+        <div class="service-grid">
+            @foreach (var service in Model.Services)
+            {
+                <article class="service-card">
+                    <div class="service-icon">✂</div>
+                    <div class="service-number">@service.Id.ToString("00")</div>
+                    <h3>@service.Name</h3>
+                    <p>@service.Description</p>
+                    <div class="service-meta">
+                        <span>@service.DurationMinutes мин.</span>
+                        <strong>@service.Price.ToString("0.00") лв.</strong>
+                    </div>
+                    <a asp-controller="Booking" asp-action="Index" asp-route-serviceId="@service.Id">Избери услуга →</a>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="dark-section">
+    <div class="container split-section">
+        <div>
+            <span class="eyebrow">ЗА НАС</span>
+            <h2>Добрата прическа<br /><em>е усещане.</em></h2>
+            <p>Sharp & Co. събира класическата барбър култура с чист, модерен подход. Влизаш с идея. Излизаш с увереност.</p>
+            <a class="btn btn-outline-light" asp-controller="Barbers" asp-action="Index">Запознай се с екипа →</a>
+        </div>
+        <div class="quote-card">
+            <span class="quote-mark">“</span>
+            <p>„Тук детайлите имат значение. Всеки клиент получава време, внимание и стил, който му пасва.“</p>
+            <span class="quote-author">— ЕКИПЪТ НА SHARP & CO.</span>
+        </div>
+    </div>
+</section>
+
+<section class="section team-preview">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow dark">ХОРАТА ЗАД СТИЛА</span>
+                <h2>Запознай се с<br /><em>барберите.</em></h2>
+            </div>
+            <a class="text-link" asp-controller="Barbers" asp-action="Index">Целият екип →</a>
+        </div>
+        <div class="barber-grid">
+            @foreach (var barber in Model.Barbers)
+            {
+                var initials = string.Join("", barber.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(x => x[0]));
+                <article class="barber-card">
+                    <div class="barber-photo"><span>@initials</span></div>
+                    <div class="barber-info">
+                        <h3>@barber.FullName</h3>
+                        <p>@barber.Specialization</p>
+                        <a asp-controller="Booking" asp-action="Index" asp-route-barberId="@barber.Id">Запази при него →</a>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="booking-banner">
+    <div class="container booking-banner-inner">
+        <div><span class="eyebrow">ГОТОВ ЛИ СИ?</span><h2>Твоят стол те чака.</h2></div>
+        <a class="btn btn-gold btn-lg" asp-controller="Booking" asp-action="Index">Запази час →</a>
+    </div>
+</section>
