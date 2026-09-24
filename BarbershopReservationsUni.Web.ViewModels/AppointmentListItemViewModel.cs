@@ -1,4 +1,4 @@
- using BarbershopReservationsUni.Data.Models;
+using BarbershopReservationsUni.Data.Models;
 
 namespace BarbershopReservationsUni.Web.ViewModels;
 
@@ -10,4 +10,7 @@ public class AppointmentListItemViewModel
     public DateTime AppointmentDate { get; set; }
     public AppointmentStatus Status { get; set; }
     public decimal Price { get; set; }
+
+    /// <summary>Може ли часът да бъде отменен (бъдещ и не вече отказан/завършен).</summary>
+    public bool CanCancel { get; set; }
 }
