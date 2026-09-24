@@ -23,7 +23,7 @@ namespace BarbershopReservationsUni.Data.Models
         public string? Email { get; set; }
 
         [Display(Name = "Дата на регистрация")]
-        public DateTime RegisteredOn { get; set; } = DateTime.Now;
+        public DateTime RegisteredOn { get; set; } = DateTime.UtcNow;
 
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }

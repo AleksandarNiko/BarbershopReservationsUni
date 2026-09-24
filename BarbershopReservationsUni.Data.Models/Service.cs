@@ -19,7 +19,7 @@ namespace BarbershopReservationsUni.Data.Models
         [Required]
         [Column(TypeName = "decimal(8,2)")]
         [Range(0, 9999, ErrorMessage = "Цената трябва да е положително число.")]
-        [Display(Name = "Цена (лв.)")]
+        [Display(Name = "Цена (€)")]
         public decimal Price { get; set; }
 
         [Required]
