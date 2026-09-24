@@ -1,6 +1,6 @@
 @model BookingConfirmationViewModel
 @{
-    ViewData["Title"] = "Резервацията е потвърдена";
+    ViewData["Title"] = "Потвърждение";
 }
 <section class="success-page">
     <div class="container">
@@ -8,17 +8,17 @@
             <div class="success-icon">✓</div>
             <span class="eyebrow dark">РЕЗЕРВАЦИЯ #@Model.AppointmentId</span>
             <h1>Готово.<br /><em>Часът е твой.</em></h1>
-            <p>Очакваме те. Запази номера на резервацията, ако ти потрябва по-късно.</p>
+            <p>Очакваме те, @Model.ClientName. Запази номера на резервацията, ако ти потрябва по-късно.</p>
             <div class="confirmation-details">
                 <div><span>Услуга</span><strong>@Model.ServiceName</strong></div>
                 <div><span>Барбер</span><strong>@Model.BarberName</strong></div>
                 <div><span>Дата</span><strong>@Model.AppointmentDate.ToString("dd.MM.yyyy")</strong></div>
                 <div><span>Час</span><strong>@Model.AppointmentDate.ToString("HH:mm")</strong></div>
-                <div><span>Цена</span><strong>@Model.Price.ToString("0.00") €.</strong></div>
+                <div><span>Цена</span><strong>@Model.Price.ToString("0.00") €</strong></div>
             </div>
             <div class="success-actions">
                 <a class="btn btn-gold btn-lg" asp-controller="Home" asp-action="Index">Към началото</a>
-                <a class="btn btn-outline-dark btn-lg" asp-controller="Appointments" asp-action="Index">Моите часове</a>
+                <a class="btn btn-outline-dark btn-lg" asp-controller="MyBookings" asp-action="Index">Моите часове</a>
             </div>
         </div>
     </div>

@@ -22,7 +22,7 @@
                             <input type="radio" name="serviceChoice" value="@service.Id" @(Model.ServiceId == service.Id ? "checked" : "") />
                             <span class="choice-content">
                                 <strong>@service.Name</strong>
-                                <small>@service.DurationMinutes мин. · @service.Price.ToString("0.00") лв.</small>
+                                <small>@service.DurationMinutes мин. · @service.Price.ToString("0.00") €</small>
                             </span>
                             <span class="radio-dot"></span>
                         </label>
@@ -46,7 +46,6 @@
                 </div>
 
                 <form asp-action="Create" method="post" id="bookingForm">
-                    @Html.AntiForgeryToken()
                     <input type="hidden" asp-for="ServiceId" id="serviceId" />
                     <input type="hidden" asp-for="BarberId" id="barberId" />
 
@@ -54,7 +53,7 @@
                     <div class="date-time-grid">
                         <div>
                             <label asp-for="Date" class="form-label">Дата</label>
-                            <input asp-for="Date" class="form-control form-control-lg" id="dateInput" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <input asp-for="Date" type="date" value="@Model.Date.ToString("yyyy-MM-dd")" class="form-control form-control-lg" id="dateInput" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
                             <span asp-validation-for="Date" class="text-danger"></span>
                         </div>
                         <div>
@@ -67,21 +66,23 @@
                             </div>
                             <input type="hidden" asp-for="Time" id="timeInput" />
                             <span asp-validation-for="Time" class="text-danger"></span>
-                            <div id="slotMessage" class="slot-message"></div>
+                            <div id="slotMessage" class="slot-message">@(Model.AvailableTimes.Any() ? "" : "Избери услуга, бръснар и дата, за да видиш свободните часове.")</div>
                         </div>
                     </div>
 
                     <div class="step mt-5"><span>04</span><div><small>СТЪПКА 4</small><h2>Твоите данни</h2></div></div>
                     <div class="row g-3">
                         <div class="col-md-6"><label asp-for="ClientName" class="form-label"></label><input asp-for="ClientName" class="form-control form-control-lg" placeholder="Име и фамилия" /><span asp-validation-for="ClientName" class="text-danger"></span></div>
-                        <div class="col-md-6"><label asp-for="ClientPhone" class="form-label"></label><input asp-for="ClientPhone" class="form-control form-control-lg" placeholder="0888 123 456" /><span asp-validation-for="ClientPhone" class="text-danger"></span></div>
+                        <div class="col-md-6"><label asp-for="ClientPhone" class="form-label"></label><input asp-for="ClientPhone" class="form-control form-control-lg" placeholder="0888 123 456" inputmode="tel" autocomplete="tel" /><span asp-validation-for="ClientPhone" class="text-danger"></span></div>
                         <div class="col-md-6"><label asp-for="ClientEmail" class="form-label"></label><input asp-for="ClientEmail" class="form-control form-control-lg" placeholder="you@email.com" /><span asp-validation-for="ClientEmail" class="text-danger"></span></div>
                         <div class="col-12"><label asp-for="Notes" class="form-label"></label><textarea asp-for="Notes" class="form-control" rows="3" placeholder="Нещо, което искаш да знаем? (по желание)"></textarea></div>
                     </div>
 
                     @if (!ViewData.ModelState.IsValid)
                     {
-                        <div class="alert alert-danger mt-4">@Html.ValidationSummary(true)</div>
+                        <div class="alert alert-danger mt-4" role="alert">
+                            <div asp-validation-summary="ModelOnly" class="mb-0"></div>
+                        </div>
                     }
 
                     <button type="submit" class="btn btn-gold btn-lg w-100 booking-submit">Потвърди резервацията <span>→</span></button>
