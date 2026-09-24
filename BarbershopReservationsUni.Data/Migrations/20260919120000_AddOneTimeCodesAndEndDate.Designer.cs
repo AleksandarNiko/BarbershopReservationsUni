@@ -4,6 +4,7 @@ using BarbershopReservationsUni.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarbershopReservationsUni.Data.Migrations
 {
     [DbContext(typeof(BarbershopReservationsUniDbContext))]
-    partial class BarbershopReservationsUniDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260919120000_AddOneTimeCodesAndEndDate")]
+    partial class AddOneTimeCodesAndEndDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
