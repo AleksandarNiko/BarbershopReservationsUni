@@ -1,21 +1,20 @@
-﻿using BarbershopReservationsUni.Data.Models;
+using BarbershopReservationsUni.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BarbershopReservationsUni.Data
 {
-    public class BarbershopReservationsUniDbContext : DbContext 
+    public class BarbershopReservationsUniDbContext : DbContext
     {
         public BarbershopReservationsUniDbContext(DbContextOptions<BarbershopReservationsUniDbContext> options)
             : base(options)
-        { 
+        {
         }
-            public DbSet<Client> Clients => Set<Client>();
+
+        public DbSet<Client> Clients => Set<Client>();
         public DbSet<Barber> Barbers => Set<Barber>();
         public DbSet<Service> Services => Set<Service>();
         public DbSet<Appointment> Appointments => Set<Appointment>();
+        public DbSet<OneTimeCode> OneTimeCodes => Set<OneTimeCode>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,23 +24,32 @@ namespace BarbershopReservationsUni.Data
                 .HasIndex(c => c.PhoneNumber)
                 .IsUnique();
 
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Client)
-                .WithMany(c => c.Appointments)
-                .HasForeignKey(a => a.ClientId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Appointment>(entity =>
+            {
+                entity.HasOne(a => a.Client)
+                    .WithMany(c => c.Appointments)
+                    .HasForeignKey(a => a.ClientId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Barber)
-                .WithMany(b => b.Appointments)
-                .HasForeignKey(a => a.BarberId)
-                .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.Barber)
+                    .WithMany(b => b.Appointments)
+                    .HasForeignKey(a => a.BarberId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Appointment>()
-                .HasOne(a => a.Service)
-                .WithMany(s => s.Appointments)
-                .HasForeignKey(a => a.ServiceId)
-                .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.Service)
+                    .WithMany(s => s.Appointments)
+                    .HasForeignKey(a => a.ServiceId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Ускорява проверката за припокриване: „всички часове на бръснар X в интервала ...“
+                entity.HasIndex(a => new { a.BarberId, a.AppointmentDate, a.EndDate });
+            });
+
+            modelBuilder.Entity<OneTimeCode>(entity =>
+            {
+                // Всяко търсене е по телефон + свежест
+                entity.HasIndex(o => new { o.PhoneNumber, o.CreatedOn });
+            });
 
             modelBuilder.Entity<Service>().HasData(
                 new Service { Id = 1, Name = "Мъжко подстригване", Description = "Класическо подстригване с машинка и ножица", Price = 20.00m, DurationMinutes = 30 },
@@ -54,6 +62,6 @@ namespace BarbershopReservationsUni.Data
                 new Barber { Id = 1, FullName = "Иван Иванов", Specialization = "Класически стилове", PhoneNumber = "0888111222", IsActive = true },
                 new Barber { Id = 2, FullName = "Георги Петров", Specialization = "Брада и оформяне", PhoneNumber = "0888333444", IsActive = true }
             );
-    }
+        }
     }
 }
