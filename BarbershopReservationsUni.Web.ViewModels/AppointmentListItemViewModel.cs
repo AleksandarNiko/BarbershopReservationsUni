@@ -7,10 +7,10 @@ public class AppointmentListItemViewModel
     public int Id { get; set; }
     public string ServiceName { get; set; } = string.Empty;
     public string BarberName { get; set; } = string.Empty;
+    public string ClientName { get; set; } = string.Empty;
+    public string ClientPhone { get; set; } = string.Empty;
     public DateTime AppointmentDate { get; set; }
     public AppointmentStatus Status { get; set; }
     public decimal Price { get; set; }
-
-    /// <summary>Може ли часът да бъде отменен (бъдещ и не вече отказан/завършен).</summary>
     public bool CanCancel { get; set; }
 }
