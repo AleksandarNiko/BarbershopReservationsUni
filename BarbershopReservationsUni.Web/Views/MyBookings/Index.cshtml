@@ -6,7 +6,7 @@
     <div class="container">
         <span class="eyebrow">МОИТЕ ЧАСОВЕ</span>
         <h1>Твоите<br /><em>часове.</em></h1>
-        <p>Влез с телефонния номер, с който си резервирал, за да видиш или отмениш часовете си.</p>
+        <p>Клиентите влизат директно с телефонния номер от резервацията. Бръснарите използват служебната си парола в същото поле.</p>
     </div>
 </section>
 
@@ -20,20 +20,30 @@
         @if (!Model.IsSignedIn)
         {
             <form asp-action="Login" method="post" class="lookup-card">
-                <label for="phone" class="form-label">Телефонен номер</label>
+                <label for="phone" class="form-label">Телефонен номер / служебна парола</label>
                 <div class="lookup-row">
                     <input id="phone" name="phone" value="@Model.Phone" class="form-control form-control-lg"
-                           placeholder="0888 123 456" inputmode="tel" autocomplete="tel" required />
-                    <button type="submit" class="btn btn-dark btn-lg">Изпрати код →</button>
+                           placeholder="0888 123 456" autocomplete="off" required />
+                    <button type="submit" class="btn btn-dark btn-lg">Вход →</button>
                 </div>
+                <small class="text-muted d-block mt-2">За клиентски профил не се изпраща SMS код.</small>
             </form>
         }
         else
         {
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <strong>@Model.ClientName</strong>
-                    <div class="text-muted">@Model.MaskedPhone</div>
+                    @if (Model.IsBarber)
+                    {
+                        <span class="eyebrow">ПРОФИЛ НА БРЪСНАР</span>
+                        <strong class="d-block">@Model.BarberName</strong>
+                        <div class="text-muted">Тук виждаш клиентите и запазените при теб часове.</div>
+                    }
+                    else
+                    {
+                        <strong>@Model.ClientName</strong>
+                        <div class="text-muted">@Model.MaskedPhone</div>
+                    }
                 </div>
                 <form asp-action="Logout" method="post">
                     <button type="submit" class="btn btn-outline-dark">Изход</button>
@@ -44,9 +54,12 @@
             {
                 <div class="empty-state">
                     <span>○</span>
-                    <h3>Още нямаш резервации</h3>
-                    <p>Запази първия си час – отнема по-малко от минута.</p>
-                    <a class="btn btn-gold" asp-controller="Booking" asp-action="Index">Запази час →</a>
+                    <h3>@(Model.IsBarber ? "Няма записани часове" : "Още нямаш резервации")</h3>
+                    @if (!Model.IsBarber)
+                    {
+                        <p>Запази първия си час – отнема по-малко от минута.</p>
+                        <a class="btn btn-gold" asp-controller="Booking" asp-action="Index">Запази час →</a>
+                    }
                 </div>
             }
             else
@@ -74,14 +87,21 @@
                                 <span>@item.AppointmentDate.ToString("MMM", new System.Globalization.CultureInfo("bg-BG")).ToUpper()</span>
                             </div>
                             <div class="appointment-main">
-                                <h3>@item.ServiceName</h3>
-                                <p>@item.BarberName · @item.AppointmentDate.ToString("HH:mm") · @item.Price.ToString("0.00") €</p>
+                                @if (Model.IsBarber)
+                                {
+                                    <h3>@item.ClientName</h3>
+                                    <p><strong>@item.ClientPhone</strong> · @item.ServiceName · @item.AppointmentDate.ToString("HH:mm")</p>
+                                }
+                                else
+                                {
+                                    <h3>@item.ServiceName</h3>
+                                    <p>@item.BarberName · @item.AppointmentDate.ToString("HH:mm") · @item.Price.ToString("0.00") €</p>
+                                }
                             </div>
                             <span class="status @statusClass">@statusText</span>
-                            @if (item.CanCancel)
+                            @if (!Model.IsBarber && item.CanCancel)
                             {
-                                <form asp-action="Cancel" method="post"
-                                      onsubmit="return confirm('Сигурни ли сте, че искате да отмените този час?');">
+                                <form asp-action="Cancel" method="post" onsubmit="return confirm('Сигурни ли сте, че искате да отмените този час?');">
                                     <input type="hidden" name="id" value="@item.Id" />
                                     <button type="submit" class="cancel-link">Отмени</button>
                                 </form>
