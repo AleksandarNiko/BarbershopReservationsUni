@@ -1,42 +1,32 @@
+using System.Diagnostics;
+using BarbershopReservationsUni.Services;
 using BarbershopReservationsUni.Web.Models;
 using BarbershopReservationsUni.Web.ViewModels;
-using BarbershopReservationsUni.Data;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace BarbershopReservationsUni.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly BarbershopReservationsUniDbContext _db;
+        private readonly IBookingService bookings;
 
-        public HomeController(BarbershopReservationsUniDbContext db)
-        {
-            _db = db;
-        }
+        public HomeController(IBookingService bookings) => this.bookings = bookings;
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
             var viewModel = new HomeViewModel
             {
-                Services = _db.Services.OrderBy(s => s.Id).ToList(),
-                Barbers = _db.Barbers.Where(b => b.IsActive).OrderBy(b => b.Id).ToList(),
-                CompletedAppointments = _db.Appointments.Count()
+                Services = await bookings.GetServicesAsync(cancellationToken),
+                Barbers = await bookings.GetActiveBarbersAsync(cancellationToken)
             };
 
             return View(viewModel);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        public IActionResult Privacy() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        public IActionResult Error() =>
+            View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
